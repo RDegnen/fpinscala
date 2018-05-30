@@ -76,11 +76,15 @@ object List { // `List` companion object. Contains functions for creating and wo
       case _ => l
     }
 
-  def init[A](l: List[A]): List[A] = ???
+  def init[A](l: List[A]): List[A] = l match {
+    case Cons(x,xs) => Cons(x,init(xs))
+    case Cons(x,Nil) => Nil
+  }
 
-  def length[A](l: List[A]): Int = ???
+  def length[A](l: List[A]): Int =
+    foldRight(l, 0)((_,y) => y + 1)
 
-  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = ???
+  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = ??? // TODO Im on this one
 
   def map[A,B](l: List[A])(f: A => B): List[B] = ???
 
