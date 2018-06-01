@@ -84,7 +84,35 @@ object List { // `List` companion object. Contains functions for creating and wo
   def length[A](l: List[A]): Int =
     foldRight(l, 0)((_,y) => y + 1)
 
-  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = ??? // TODO Im on this one
+  // My wrong but compiles foldleft
+  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = {
+    @annotation.tailrec
+    def go(n: Int): B =
+      if (n == length(l)) z
+      else if (n < length(l)) f(z, foldLeft(l, z)(f))
+      else go(n + 1)
+
+    go(0)
+  }
+
+  // correct one
+  @annotation.tailrec
+  def goodFoldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B =
+    l match {
+      case Nil => z
+      case Cons(h,t) => goodFoldLeft(t, f(z,h))(f)
+    }
+
+  def leftSum(ns: List[Int]) =
+    goodFoldLeft(ns, 0)((x,y) => x + y)
+
+  def leftProduct(ns: List[Double]) =
+    goodFoldLeft(ns, 1.0)(_ * _)
+
+  def leftLength[A](l: List[A]): Int =
+    goodFoldLeft(l, 0)((x,_) => x + 1)
+
+  // TODO Exercise 3.12
 
   def map[A,B](l: List[A])(f: A => B): List[B] = ???
 
