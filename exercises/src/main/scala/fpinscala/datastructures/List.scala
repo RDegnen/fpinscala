@@ -85,38 +85,46 @@ object List { // `List` companion object. Contains functions for creating and wo
     foldRight(l, 0)((_,y) => y + 1)
 
   // My wrong but compiles foldleft
-  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = {
-    @annotation.tailrec
-    def go(n: Int): B =
-      if (n == length(l)) z
-      else if (n < length(l)) f(z, foldLeft(l, z)(f))
-      else go(n + 1)
-
-    go(0)
-  }
+//  def badfoldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = {
+//    @annotation.tailrec
+//    def go(n: Int): B =
+//      if (n == length(l)) z
+//      else if (n < length(l)) badfoldLeft(l, f(z, l)(f))
+//      else go(n + 1)
+//
+//    go(0)
+//  }
 
   // correct one
   @annotation.tailrec
-  def goodFoldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B =
+  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B =
     l match {
       case Nil => z
-      case Cons(h,t) => goodFoldLeft(t, f(z,h))(f)
+      case Cons(h,t) => foldLeft(t, f(z,h))(f)
     }
 
   def leftSum(ns: List[Int]) =
-    goodFoldLeft(ns, 0)((x,y) => x + y)
+    foldLeft(ns, 0)((x,y) => x + y)
 
   def leftProduct(ns: List[Double]) =
-    goodFoldLeft(ns, 1.0)(_ * _)
+    foldLeft(ns, 1.0)(_ * _)
 
   def leftLength[A](l: List[A]): Int =
-    goodFoldLeft(l, 0)((x,_) => x + 1)
+    foldLeft(l, 0)((x,_) => x + 1)
 
-  // TODO Exercise 3.12
+  def reverse[A](l: List[A]): List[A] =
+    foldLeft(l, List[A]())((x,y) => Cons(y,x))
+
+  def appendFoldRight[A](l: List[A], a: A): List[A] =
+    foldRight(l, Cons(a,Nil))((x,y) => Cons(x,y))
+
+  def concatDeepList[A](l: List[List[A]]): List[A] =
+    foldRight(l, Nil:List[A])(append)
+  // TODO problem after this hard concat lol
 
   def map[A,B](l: List[A])(f: A => B): List[B] = ???
 
   def main(args: Array[String]): Unit = {
-    println(x)
+    println(concatDeepList(List(List(1,2,3), List(4,5,6))))
   }
 }
