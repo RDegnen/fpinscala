@@ -120,11 +120,18 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def concatDeepList[A](l: List[List[A]]): List[A] =
     foldRight(l, Nil:List[A])(append)
-  // TODO problem after this hard concat lol
+
+  def addOne(l: List[Int]): List[Int] =
+    foldRight(l, Nil:List[Int])((x,y) => Cons(x+1,y))
+
+  def dToString(l: List[Double]): List[String] =
+    foldRight(l, Nil:List[String])((x,y) => Cons(x.toString, y))
+
+  // TODO 3.18
 
   def map[A,B](l: List[A])(f: A => B): List[B] = ???
 
   def main(args: Array[String]): Unit = {
-    println(concatDeepList(List(List(1,2,3), List(4,5,6))))
+    println(dToString(List(1.0,2.0,3.0)))
   }
 }
