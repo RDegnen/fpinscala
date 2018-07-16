@@ -106,6 +106,11 @@ object Nonblocking {
     def sequence[A](as: List[Par[A]]): Par[List[A]] =
       map(sequenceBalanced(as.toIndexedSeq))(_.toList)
 
+    def parFilter[A](l: List[A])(f: A => Boolean): Par[List[A]] = {
+      val pars: List[Par[List[A]]] =
+        l.map(asyncF((a: A) => if (f(a)) List(a) else List()))
+      map(sequence(pars))(_.flatten)
+    }
     // exercise answers
 
     /*
